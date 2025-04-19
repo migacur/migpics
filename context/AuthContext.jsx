@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useState } from "react";
 import clienteAxios from "../config/axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 import PropTypes from "prop-types";
 
 export const ContextoUsuario = createContext();
