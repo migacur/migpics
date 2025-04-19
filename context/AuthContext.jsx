@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useState } from "react";
 import clienteAxios from "../config/axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import jwtDecode from 'jwt-decode';
 import PropTypes from "prop-types";
 
 export const ContextoUsuario = createContext();
@@ -38,13 +39,19 @@ export const Usuarios = ({ children }) => {
     }
   };
 
-  const startTokenRefreshTimer = () => {
-    // Limpiar el temporizador anterior si existe
-    if (refreshTokenTimer) {
-      clearTimeout(refreshTokenTimer);
-    }
-    refreshTokenTimer = setTimeout(refreshAccessToken, 14 * 60 * 1000); // 14 minutos
-  };
+
+const startTokenRefreshTimer = (accessToken) => {
+  if (refreshTokenTimer) clearTimeout(refreshTokenTimer);
+  
+  // Decodificar usando la función importada
+  const decoded = jwtDecode(accessToken); // <--- Sin el .decode
+  if (!decoded?.exp) return;
+
+  const expiresIn = decoded.exp * 1000 - Date.now();
+  const refreshTime = expiresIn - 60000;
+
+  refreshTokenTimer = setTimeout(refreshAccessToken, refreshTime);
+};
 
   const logoutUser = async () => {
     try {
