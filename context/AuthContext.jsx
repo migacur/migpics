@@ -16,75 +16,53 @@ export const Usuarios = ({ children }) => {
       const res = await clienteAxios.get("/verify", {
         withCredentials: true,
       });
-      guardarUsuarios(res.data);
+      // Evita actualizar el estado si los datos son iguales
+      if (JSON.stringify(res.data) !== JSON.stringify(usuario)) {
+        guardarUsuarios(res.data);
+      }
       startTokenRefreshTimer();
       return true;
     } catch (e) {
-      console.log(e);
       guardarUsuarios(null);
       return false;
     }
-  }, []);
-
-  let isRefreshing = false; // Bandera para evitar múltiples renovaciones
+  }, [usuario]); // Añadir usuario como dependencia
 
   const refreshAccessToken = async () => {
-    if (isRefreshing) return;
-    isRefreshing = true;
-  
     try {
-      const res = await clienteAxios.post("/refresh-token", {}, { withCredentials: true });
+      await clienteAxios.post("/refresh-token", {}, { withCredentials: true });
       startTokenRefreshTimer();
-      return res.data;
     } catch (error) {
-      console.error("Error al renovar token:", error);
-      // Cierra sesión y redirige solo si el error es crítico
-      if (error.response?.status === 403) {
-        guardarUsuarios(null);
-        window.location.href = "/";
-      }
-    } finally {
-      isRefreshing = false;
+      guardarUsuarios(null);
+      navigate("/");
     }
   };
-  
+
   const startTokenRefreshTimer = () => {
-    if (refreshTokenTimer) clearTimeout(refreshTokenTimer);
-    refreshTokenTimer = setTimeout(refreshAccessToken, 14 * 60 * 1000); // 14 minutos
+    clearTimeout(refreshTokenTimer);
+    refreshTokenTimer = setTimeout(refreshAccessToken, 14 * 60 * 1000);
   };
-  
+
   const logoutUser = async () => {
     try {
-      const userId = usuario.id;
-      const res = await clienteAxios.post(
+      await clienteAxios.post(
         "/cerrar-sesion",
-        { userId },
+        { userId: usuario?.id },
         { withCredentials: true }
       );
       guardarUsuarios(null);
-      // Limpiar el temporizador cuando el usuario cierra sesión
-      if (refreshTokenTimer) {
-        clearTimeout(refreshTokenTimer);
-      }
+      clearTimeout(refreshTokenTimer);
       navigate("/");
-
-      if (res.status === 200) {
-        Swal.fire("", res.data.msg, "success");
-      }
+      Swal.fire("", "Sesión cerrada", "success");
     } catch (e) {
-      Swal.fire({
-        title: "",
-        text: e.response.data.error,
-        icon: "error",
-      });
+      Swal.fire("Error", e.response?.data?.error || "Error al cerrar sesión", "error");
     }
   };
 
   useEffect(() => {
-    if(usuario){
-      autenticarUser();
-    }
-  }, [usuario,autenticarUser]);
+    // Verificar autenticación solo al montar el componente
+    autenticarUser();
+  }, []); // Eliminar todas las dependencias
 
   return (
     <ContextoUsuario.Provider
@@ -92,8 +70,6 @@ export const Usuarios = ({ children }) => {
         usuario,
         autenticarUser,
         guardarUsuarios,
-        refreshAccessToken,
-        startTokenRefreshTimer,
         logoutUser,
       }}
     >
