@@ -26,26 +26,33 @@ export const Usuarios = ({ children }) => {
     }
   }, []);
 
+  let isRefreshing = false; // Bandera para evitar múltiples renovaciones
+
   const refreshAccessToken = async () => {
+    if (isRefreshing) return;
+    isRefreshing = true;
+  
     try {
       const res = await clienteAxios.post("/refresh-token", {}, { withCredentials: true });
       startTokenRefreshTimer();
       return res.data;
     } catch (error) {
       console.error("Error al renovar token:", error);
-      guardarUsuarios(null);
-      window.location.href = "/";
+      // Cierra sesión y redirige solo si el error es crítico
+      if (error.response?.status === 403) {
+        guardarUsuarios(null);
+        window.location.href = "/";
+      }
+    } finally {
+      isRefreshing = false;
     }
   };
-
+  
   const startTokenRefreshTimer = () => {
-    // Limpiar el temporizador anterior si existe
-    if (refreshTokenTimer) {
-      clearTimeout(refreshTokenTimer);
-    }
+    if (refreshTokenTimer) clearTimeout(refreshTokenTimer);
     refreshTokenTimer = setTimeout(refreshAccessToken, 14 * 60 * 1000); // 14 minutos
   };
-
+  
   const logoutUser = async () => {
     try {
       const userId = usuario.id;
