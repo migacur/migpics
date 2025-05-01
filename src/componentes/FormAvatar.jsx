@@ -26,7 +26,7 @@ const FormAvatar = ({showForm}) => {
      if(!avatar) return;
 
       const formData = new FormData();
-      formData.append('file', avatar);
+      formData.append("file", avatar);
 
       try {
         const res = await clienteAxios.put(`/change-avatar/${usuario.id}`,formData,{
