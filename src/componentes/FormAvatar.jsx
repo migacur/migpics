@@ -30,7 +30,10 @@ const FormAvatar = ({showForm}) => {
 
       try {
         const res = await clienteAxios.put(`/change-avatar/${usuario.id}`,formData,{
-          withCredentials:true
+          withCredentials:true,
+          headers: {
+            "Content-Type": "multipart/form-data" 
+          }
         })
 
         if(res.status === 200) {

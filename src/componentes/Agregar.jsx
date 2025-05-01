@@ -64,7 +64,7 @@ const Agregar = () => {
         {
           withCredentials: true,
           headers: {
-            "Content-Type": "multipart/form-data" // 👈 ¡Esto es crucial!
+            "Content-Type": "multipart/form-data" 
           }
         }
       );
