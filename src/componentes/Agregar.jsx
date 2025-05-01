@@ -69,7 +69,7 @@ const Agregar = () => {
         }
       );
 
-      if (res.status === 200) {
+      if (res.status === 201) {
         Swal.fire("", res.data.msg, "success");
 
         setLoad(false);
