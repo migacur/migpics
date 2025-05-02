@@ -369,7 +369,7 @@ const { postId } = useParams();
       if(res.status === 200)
         Swal.fire(
           '',
-          res.data.msg,
+         "Imagen descargada",
           'success'
         );
       }
