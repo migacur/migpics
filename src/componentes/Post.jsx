@@ -363,7 +363,7 @@ const { postId } = useParams();
       });
   
       if (confirmacion.isConfirmed) {
-        // 1. Hacer la petición con responseType: 'blob'
+    
         const res = await clienteAxios.post(`/descargar-imagen/${postId}`, { url }, {
           responseType: 'blob', // ⚠️ Indica que la respuesta es un archivo binario
         });
@@ -389,9 +389,7 @@ const { postId } = useParams();
         // 4. Limpiar recursos
         window.URL.revokeObjectURL(downloadUrl);
         document.body.removeChild(link);
-  
-        // Mostrar confirmación
-        Swal.fire('', "Imagen descargada", 'success');
+
       }
     } catch (e) {
       Swal.fire({
@@ -507,7 +505,7 @@ const { postId } = useParams();
                   <div className="post_download" 
                   onClick={()=> descargarImagenPost(data.publicacion_id,data.imagen)}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#08964f" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 8zM4 19h16v2H4z"/></svg>
-                  <span className="card_comments">{data.descargas}</span>
+                  {/* <span className="card_comments">{data.descargas}</span> */}
                   </div>
                   <div className="post_fav" onClick={()=> addFavorite(data.publicacion_id)}>
                   <svg xmlns="http://www.w3.org/2000/svg" 
