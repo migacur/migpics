@@ -351,10 +351,8 @@ const { postId } = useParams();
       }
   }
 
-  const descargarImagenPost = async (postId,url) => {
-
+  const descargarImagenPost = async (postId, url) => {
     try {
-
       const confirmacion = await Swal.fire({
         title: '',
         text: '¿Descargar la imagen de esta publicación?',
@@ -363,24 +361,46 @@ const { postId } = useParams();
         confirmButtonText: 'Sí, descargar',
         cancelButtonText: 'Cancelar',
       });
-
+  
       if (confirmacion.isConfirmed) {
-     const res = await clienteAxios.post(`/descargar-imagen/${postId}`, { url });
-      if(res.status === 200)
-        Swal.fire(
-          '',
-         "Imagen descargada",
-          'success'
-        );
+        // 1. Hacer la petición con responseType: 'blob'
+        const res = await clienteAxios.post(`/descargar-imagen/${postId}`, { url }, {
+          responseType: 'blob', // ⚠️ Indica que la respuesta es un archivo binario
+        });
+  
+        // 2. Crear un Blob con la respuesta
+        const blob = new Blob([res.data], { type: res.headers['content-type'] });
+  
+        // 3. Crear un enlace temporal para descargar el archivo
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+  
+        // Extraer el nombre del archivo desde el header (opcional)
+        const contentDisposition = res.headers['content-disposition'];
+        const filename = contentDisposition
+          ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+          : `imagen-${postId}.${url.split('.').pop()}`;
+  
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+  
+        // 4. Limpiar recursos
+        window.URL.revokeObjectURL(downloadUrl);
+        document.body.removeChild(link);
+  
+        // Mostrar confirmación
+        Swal.fire('', "Imagen descargada", 'success');
       }
     } catch (e) {
       Swal.fire({
         title: '',
-        text: e.response.data.msg,
+        text: e.response?.data?.msg || 'Error al descargar la imagen',
         icon: 'error',
-      })
+      });
     }
-  }
+  };
 
   const addFavorite = async postId => {
 
