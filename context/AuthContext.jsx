@@ -53,7 +53,7 @@ export const Usuarios = ({ children }) => {
       guardarUsuarios(null);
       clearTimeout(refreshTokenTimer);
       navigate("/");
-      Swal.fire("", "Sesión cerrada", "success");
+      Swal.fire("", "Has cerrado la sesión", "success");
     } catch (e) {
       Swal.fire("Error", e.response?.data?.error || "Error al cerrar sesión", "error");
     }
