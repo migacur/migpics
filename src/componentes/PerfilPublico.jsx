@@ -88,7 +88,7 @@ const PerfilPublico = () => {
         withCredentials: true,
       });
       if (res.status === 200) {
-        Swal.fire("", "Ya no sigues a este usuario", "success");
+        Swal.fire("", res.data.msg, "success");
 
         if (!res.data.isFollow) {
           setVerifyFollow(false);
