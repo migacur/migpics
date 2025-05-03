@@ -521,7 +521,7 @@ const { postId } = useParams();
                   </div>
                   <div className="cantidad_likes">
                   <button className="btn_megusta" onClick={()=> setShowLikes(true)}
-                  > {`${like}`} {like > 1 ? 'Me gustas' : 'Me gusta'}</button>
+                  > {like && `${like}`} {like > 1 ? 'Me gustas' : 'Me gusta'}</button>
                   </div>
                   <ListadoLikes clase={showLikes} 
                                 postId={data.publicacion_id} 
@@ -682,13 +682,13 @@ const { postId } = useParams();
                       }
                         </>
                       }
-                 <p className="post_by">Publicado {data?.fecha_publicacion && data.fecha_publicacion
+                 {usuario?.username && <p className="post_by">Publicado {data?.fecha_publicacion && data.fecha_publicacion
                                                   .split(".")[0].replace("T"," a las ")} por:
                  <NavLink to={usuario?.username === data.creador_username &&
                               usuario?.id? 
             `/mi-cuenta` : `/usuario/${data.creador_username}`} className="post_url">
                  <img src={data?.creador_avatar} className="avatar_min" alt="avatar"/>
-                  {data?.creador_username}</NavLink></p>
+                  {data?.creador_username}</NavLink></p>}
                   {usuario?.id === data?.idUsuario && usuario?.username === data?.creador_username && 
                   <div className="button_post">
                   <button className="delete_post" 
