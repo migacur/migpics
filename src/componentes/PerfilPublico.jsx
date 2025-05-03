@@ -62,7 +62,7 @@ const PerfilPublico = () => {
 
   const seguirUsuario = async (userId) => {
     try {
-      const res = await clienteAxios.post(`/seguir-usuario/${userId}`, {}, {
+      const res = await clienteAxios.post("/seguir-usuario", {userId:userId}, {
         withCredentials: true,
       });
       if (res.status === 200) {
