@@ -682,7 +682,7 @@ const { postId } = useParams();
                       }
                         </>
                       }
-                 {usuario?.username && <p className="post_by">Publicado {data?.fecha_publicacion && data.fecha_publicacion
+                 {usuario?.username && data.creador_avatar && <p className="post_by">Publicado {data?.fecha_publicacion && data.fecha_publicacion
                                                   .split(".")[0].replace("T"," a las ")} por:
                  <NavLink to={usuario?.username === data.creador_username &&
                               usuario?.id? 
