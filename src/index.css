@@ -1622,6 +1622,9 @@ padding: 0;
     width: 100%;
   }
 
+  .div-images .show_post{
+    grid-template-columns: repeat(2, 1fr);
+  }
 
 }
 
