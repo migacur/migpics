@@ -1500,6 +1500,7 @@ padding: 0;
 
 }
 
+/* 
 @media(max-width:774px){
 
   .div-images .show_post img{
@@ -1519,11 +1520,11 @@ padding: 0;
 }
 
 .card_image{
- /* width: 200px; */
+
  width: 50%;
 }
 
-}
+} */
 /*
 @media(max-width:469px){
   
