@@ -685,7 +685,7 @@ input[type="file"] {
 
 .div-images .show_post img{
   user-select: none;
-  width: 225px;
+  width: 100%;
   height: 175px;
   cursor: pointer;
   user-select: none;
@@ -695,7 +695,7 @@ input[type="file"] {
 
 .card_image{
   position: relative;
-  width: 225px;
+  width: 100%;
   height: 175px;
   cursor: pointer;
   overflow: hidden;
