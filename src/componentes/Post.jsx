@@ -36,14 +36,20 @@ const { postId } = useParams();
 
 
  useEffect(() => {
-  if(!usuario){
-    const verificarUsuario = async() => {
-      const autenticado = await autenticarUser();
-      return autenticado ? autenticarUser() : navigate("/unauthorized")
-     }
-     verificarUsuario()
+  if (!usuario) {
+    const verificarUsuario = async () => {
+      try {
+        const autenticado = await autenticarUser();
+        if (!autenticado) {
+          navigate("/unauthorized");
+        }
+      } catch (error) {
+        console.error("Error al autenticar usuario:", error);
+      }
+    };
+    verificarUsuario();
   }
- },[usuario,autenticarUser,navigate])
+}, [usuario, autenticarUser, navigate]);
 
  useEffect(() => {
     if(usuario){ 
