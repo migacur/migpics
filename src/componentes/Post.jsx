@@ -7,6 +7,7 @@ import Delete from "./Icons/Delete";
 import Close from "./Icons/Close";
 import ListadoLikes from "./ListadoLikes";
 import { ContextoUsuario } from "../../context/AuthContext";
+import Unauthorized from "./Unauthorized";
 
 const Post = () => {
 
@@ -35,58 +36,59 @@ const { postId } = useParams();
  const navigate = useNavigate()
 
 
- const [loading, setLoading] = useState(true);
+ useEffect(() => {
+  if(!usuario){
+    const verificarUsuario = async() => {
+      try {
+        await autenticarUser();
+      } catch (error) {
+        console.log(error)
+        return navigate("/unauthorized")
+      }
+     
+  }
+     verificarUsuario()
+     console.log("UseEffect 1")
+  }
+ },[usuario,autenticarUser,navigate])
 
  useEffect(() => {
-   const verificarUsuario = async () => {
-     try {
-       const autenticado = await autenticarUser();
-       if (!autenticado) {
-         navigate("/unauthorized");
-       }
-     } catch (error) {
-       console.error("Error al autenticar usuario:", error);
-     } finally {
-       setLoading(false); // Marcar que la verificación de usuario ha finalizado
-     }
-   };
- 
-   if (!usuario && loading) {
-     verificarUsuario();
-   }
- }, [usuario, autenticarUser, navigate, loading]);
- 
- useEffect(() => {
-   if (!usuario || loading) return; // Evitar ejecutar la petición sin usuario válido
- 
-   const obtenerDatos = async () => {
-     try {
-       const res = await clienteAxios.get(`/post/${postId}`, {
-         withCredentials: true
-       });
-       if (res.status === 200) {
-         const { data } = res;
-         guardarData(data);
-         guardarLike(data.likes_count);
-         guardarClase(data.verificacion_usuario);
-         setContadorComentarios(data.comentarios_count + data.respuestas_count);
-         setIsFav(data.verificacion_favorito);
-         setIsCharge(true);
-       }
-     } catch (e) {
-       console.log(e);
-       Swal.fire({
-         title: 'Ha ocurrido un error',
-         text: e.response?.data?.msg || 'Error desconocido',
-         icon: 'error',
-       });
-       navigate("/unauthorized");
-     }
-   };
- 
-   obtenerDatos();
- }, [usuario, postId, navigate, loading]);
- 
+
+  if(!usuario) return <Unauthorized/>;
+
+  const obtenerDatos = async() => {
+
+    try { 
+      const res = await clienteAxios.get(`/post/${postId}`, {
+        withCredentials:true
+      });
+      if(res.status === 200){
+        const { data } = res;
+        guardarData(data);
+        guardarLike(data.likes_count)
+        guardarClase(data.verificacion_usuario)
+        setContadorComentarios(data.comentarios_count+data.respuestas_count)
+        setIsFav(data.verificacion_favorito)
+        setIsCharge(true)
+        
+      }
+        } catch (e) {
+          console.log(e)
+      
+            Swal.fire({
+              title: 'Ha ocurrido un error',
+              text: e.response.data.msg,
+              icon: 'error',
+            })
+           return navigate("/unauthorized")
+          }
+  }
+  obtenerDatos()
+  console.log("UseEffect 2")
+ },[usuario,postId,navigate])
+
+
+
 
   // dar y quitar likes a publicación
   const darLike = async postId => {
@@ -172,7 +174,7 @@ const { postId } = useParams();
     
     const postId = data.publicacion_id;
     const idUser = usuario.id
- 
+
     if(quote){
       console.log(infoRespuesta)
         try {
