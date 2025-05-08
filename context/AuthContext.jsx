@@ -13,45 +13,22 @@ export const Usuarios = ({ children }) => {
 
   const autenticarUser = useCallback(async () => {
     try {
-      // 1. Intenta verificar el access token actual
-      const res = await clienteAxios.get("/verify", { withCredentials: true });
-      
-      // Actualiza el estado solo si los datos son diferentes
+      const res = await clienteAxios.get("/verify", {
+        withCredentials: true,
+      });
+      // Evita actualizar el estado si los datos son iguales
       if (JSON.stringify(res.data) !== JSON.stringify(usuario)) {
         guardarUsuarios(res.data);
       }
-      
-      startTokenRefreshTimer(); // Programa la próxima renovación
+      startTokenRefreshTimer();
       return true;
-  
-    } catch (error) {
-      // 2. Si el access token falla (ej: expiró), usa el refresh token
-      if (error.response?.status === 401) { // Error de autenticación
-        try {
-          // Intenta renovar el access token usando el refresh token
-          const refreshRes = await clienteAxios.post(
-            "/refresh-token", 
-            {}, // Body vacío
-            { withCredentials: true } // Envía las cookies (refresh token)
-          );
-  
-          // Actualiza el estado del usuario con los nuevos datos
-          guardarUsuarios(refreshRes.data.user);
-          startTokenRefreshTimer(); // Reinicia el temporizador
-          return true;
-  
-        } catch (refreshError) {
-          // 3. Si el refresh token también falla, desloguea
-          guardarUsuarios(null);
-          return false;
-        }
-      } else {
-        // Otros errores (ej: red, servidor caído)
-        guardarUsuarios(null);
-        return false;
-      }
+    } catch (e) {
+      console.log("Prueba autenticarUser()")
+      console.log(e)
+      guardarUsuarios(null);
+      return false;
     }
-  }, [usuario]); // Asegúrate de que las dependencias sean correctas
+  }, [usuario]); // Añadir usuario como dependencia
 
   const refreshAccessToken = async () => {
     try {
