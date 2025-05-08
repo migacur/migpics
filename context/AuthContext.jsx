@@ -28,7 +28,7 @@ export const Usuarios = ({ children }) => {
       guardarUsuarios(null);
       return false;
     }
-  }, [usuario]); // Añadir usuario como dependencia
+  }, [usuario]);
 
   const refreshAccessToken = async () => {
     try {

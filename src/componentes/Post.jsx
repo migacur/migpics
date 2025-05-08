@@ -46,6 +46,7 @@ const { postId } = useParams();
  },[usuario,autenticarUser,navigate])
 
  useEffect(() => {
+    if(usuario){ 
   const obtenerDatos = async() => {
 
     try { 
@@ -74,7 +75,8 @@ const { postId } = useParams();
           }
   }
   obtenerDatos()
- },[postId,navigate])
+}
+ },[usuario,postId,navigate])
 
 
 
@@ -163,7 +165,7 @@ const { postId } = useParams();
     
     const postId = data.publicacion_id;
     const idUser = usuario.id
-
+ 
     if(quote){
       console.log(infoRespuesta)
         try {
