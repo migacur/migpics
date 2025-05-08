@@ -35,57 +35,58 @@ const { postId } = useParams();
  const navigate = useNavigate()
 
 
- useEffect(() => {
-  if (!usuario) {
-    const verificarUsuario = async () => {
-      try {
-        const autenticado = await autenticarUser();
-        if (!autenticado) {
-          navigate("/unauthorized");
-        }
-      } catch (error) {
-        console.error("Error al autenticar usuario:", error);
-      }
-    };
-    verificarUsuario();
-  }
-}, [usuario, autenticarUser, navigate]);
+ const [loading, setLoading] = useState(true);
 
  useEffect(() => {
-    if(usuario){ 
-  const obtenerDatos = async() => {
-
-    try { 
-      const res = await clienteAxios.get(`/post/${postId}`, {
-        withCredentials:true
-      });
-      if(res.status === 200){
-        const { data } = res;
-        guardarData(data);
-        guardarLike(data.likes_count)
-        guardarClase(data.verificacion_usuario)
-        setContadorComentarios(data.comentarios_count+data.respuestas_count)
-        setIsFav(data.verificacion_favorito)
-        setIsCharge(true)
-        
-      }
-        } catch (e) {
-          console.log(e)
-      
-            Swal.fire({
-              title: 'Ha ocurrido un error',
-              text: e.response.data.msg,
-              icon: 'error',
-            })
-           return navigate("/unauthorized")
-          }
-  }
-  obtenerDatos()
-}
- },[usuario,postId,navigate])
-
-
-
+   const verificarUsuario = async () => {
+     try {
+       const autenticado = await autenticarUser();
+       if (!autenticado) {
+         navigate("/unauthorized");
+       }
+     } catch (error) {
+       console.error("Error al autenticar usuario:", error);
+     } finally {
+       setLoading(false); // Marcar que la verificación de usuario ha finalizado
+     }
+   };
+ 
+   if (!usuario && loading) {
+     verificarUsuario();
+   }
+ }, [usuario, autenticarUser, navigate, loading]);
+ 
+ useEffect(() => {
+   if (!usuario || loading) return; // Evitar ejecutar la petición sin usuario válido
+ 
+   const obtenerDatos = async () => {
+     try {
+       const res = await clienteAxios.get(`/post/${postId}`, {
+         withCredentials: true
+       });
+       if (res.status === 200) {
+         const { data } = res;
+         guardarData(data);
+         guardarLike(data.likes_count);
+         guardarClase(data.verificacion_usuario);
+         setContadorComentarios(data.comentarios_count + data.respuestas_count);
+         setIsFav(data.verificacion_favorito);
+         setIsCharge(true);
+       }
+     } catch (e) {
+       console.log(e);
+       Swal.fire({
+         title: 'Ha ocurrido un error',
+         text: e.response?.data?.msg || 'Error desconocido',
+         icon: 'error',
+       });
+       navigate("/unauthorized");
+     }
+   };
+ 
+   obtenerDatos();
+ }, [usuario, postId, navigate, loading]);
+ 
 
   // dar y quitar likes a publicación
   const darLike = async postId => {
