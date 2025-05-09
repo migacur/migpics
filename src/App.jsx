@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Header from './componentes/Header'
 import Tendencias from './componentes/Tendencias'
@@ -39,7 +39,6 @@ function App() {
       <Header/>
       <main className='container'>
       <div className='div_container'>
-        <Router>
       <Routes>
       <Route path="/" element={<Recientes/>} />
        <Route path="/tendencias" element={<Tendencias/>} />
@@ -65,7 +64,7 @@ function App() {
        <Route path="/inbox/:userId" element={<Inbox/>} />
        <Route path='*' element={<NotFound texto="Página no encontrada"/>} />
     </Routes>
-      </Router>
+  
       </div>
  
     </main>
