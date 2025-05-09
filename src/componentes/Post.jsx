@@ -54,7 +54,7 @@ const { postId } = useParams();
 
  useEffect(() => {
 
-  if(!usuario) return <Unauthorized/>;
+  if(usuario){
 
   const obtenerDatos = async() => {
 
@@ -84,6 +84,7 @@ const { postId } = useParams();
           }
   }
   obtenerDatos()
+  }
   console.log("UseEffect 2")
  },[usuario,postId,navigate])
 
