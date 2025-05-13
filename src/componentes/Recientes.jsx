@@ -63,7 +63,8 @@ const irAPagina = (pagina) => setPaginaActual(pagina)
         <h1>Lo más reciente</h1>
 
         <div className="show_post">
-              { !recientes.length && !loadPage && <Spinner/> }
+              { !recientes.length && <Spinner/> }
+              { recientes.length && !loadPage && <Spinner/> }
 
               { recientes.map(img => (
                 <div className="card_image" key={img.publicacion_id} onClick={()=>capturarImg(img.publicacion_id)}>
