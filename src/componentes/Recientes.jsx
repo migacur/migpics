@@ -13,6 +13,7 @@ function Recientes() {
   const [paginaActual, setPaginaActual] = useState(1);
   const elementosPorPagina = 15;
   const [hayMasPaginas, setHayMasPaginas] = useState(false);
+  const [loadPage,setLoadPage] = useState(false)
 
   document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
@@ -21,10 +22,10 @@ function Recientes() {
   useEffect(()=> {
 
     const mostrarRecientes = async() => {
-
+      setLoadPage(false)
       const res = await clienteAxios.get(`/?pagina=${paginaActual}&elementosPorPagina=${elementosPorPagina}`)
       guardarRecientes(res.data)
-
+      setLoadPage(true)
     // Verificar si hay más datos
     const resSiguiente = await clienteAxios.get(`/?pagina=${paginaActual + 1}&elementosPorPagina=${elementosPorPagina}`);
     setHayMasPaginas(resSiguiente.data.length > 0);
@@ -62,7 +63,7 @@ const irAPagina = (pagina) => setPaginaActual(pagina)
         <h1>Lo más reciente</h1>
 
         <div className="show_post">
-              { !recientes.length && <Spinner/> }
+              { !recientes.length || !loadPage && <Spinner/> }
 
               { recientes.map(img => (
                 <div className="card_image" key={img.publicacion_id} onClick={()=>capturarImg(img.publicacion_id)}>
