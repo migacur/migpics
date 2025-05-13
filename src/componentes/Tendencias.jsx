@@ -12,6 +12,8 @@ function Tendencias() {
   const [paginaActual, setPaginaActual] = useState(1);
   const elementosPorPagina = 15;
   const [hayMasPaginas, setHayMasPaginas] = useState(false);
+   const [loadPage,setLoadPage] = useState(false)
+
 
   document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
@@ -20,11 +22,13 @@ function Tendencias() {
   useEffect(()=> {
 
     const mostrarTendencias = async() => {
+      setLoadPage(false)
       const res = await clienteAxios.get(`/tendencias?pagina=${paginaActual}&elementosPorPagina=${elementosPorPagina}`)
       guardarTendencias(res.data)
        // Verificar si hay más datos
     const resSiguiente = await clienteAxios.get(`/?pagina=${paginaActual + 1}&elementosPorPagina=${elementosPorPagina}`);
     setHayMasPaginas(resSiguiente.data.length > 0);
+    setLoadPage(true)
     }
 
     mostrarTendencias()
@@ -60,9 +64,9 @@ const irAPagina = (pagina) => setPaginaActual(pagina);
         <h1>Lo más popular</h1>
 
         <div className="show_post">
-              { !tendencias.length && <Spinner/> }
-
-              { tendencias.map(img => (
+              {/* !tendencias.length && <Spinner/> */}
+              { tendencias.length && !loadPage && <Spinner/> }
+              {loadPage && tendencias.map(img => (
                 img ?
                 <div className="card_image" key={img.publicacion_id} onClick={()=>capturarImg(img.publicacion_id)}>
 
