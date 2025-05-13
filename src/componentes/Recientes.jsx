@@ -25,11 +25,11 @@ function Recientes() {
       setLoadPage(false)
       const res = await clienteAxios.get(`/?pagina=${paginaActual}&elementosPorPagina=${elementosPorPagina}`)
       guardarRecientes(res.data)
-      setLoadPage(true)
+     
     // Verificar si hay más datos
     const resSiguiente = await clienteAxios.get(`/?pagina=${paginaActual + 1}&elementosPorPagina=${elementosPorPagina}`);
     setHayMasPaginas(resSiguiente.data.length > 0);
-
+    setLoadPage(true)
     }
 
     mostrarRecientes()
@@ -66,7 +66,7 @@ const irAPagina = (pagina) => setPaginaActual(pagina)
               {/* !recientes.length && <Spinner/> */}
               { recientes.length && !loadPage && <Spinner/> }
 
-              { recientes.map(img => (
+              {loadPage && recientes.map(img => (
                 <div className="card_image" key={img.publicacion_id} onClick={()=>capturarImg(img.publicacion_id)}>
                   <div className="post_info">
                     <div className="info_hover">
