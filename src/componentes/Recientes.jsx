@@ -63,7 +63,7 @@ const irAPagina = (pagina) => setPaginaActual(pagina)
         <h1>Lo más reciente</h1>
 
         <div className="show_post">
-              { !recientes.length && <Spinner/> }
+              {/* !recientes.length && <Spinner/> */}
               { recientes.length && !loadPage && <Spinner/> }
 
               { recientes.map(img => (
