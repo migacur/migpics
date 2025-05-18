@@ -9,7 +9,7 @@ export const ContextoUsuario = createContext();
 export const Usuarios = ({ children }) => {
   const [usuario, guardarUsuarios] = useState(null);
   const navigate = useNavigate();
-  let refreshTokenTimer;
+  //let refreshTokenTimer;
 
   const autenticarUser = useCallback(async () => {
     try {
@@ -20,7 +20,7 @@ export const Usuarios = ({ children }) => {
       if (JSON.stringify(res.data) !== JSON.stringify(usuario)) {
         guardarUsuarios(res.data);
       }
-      startTokenRefreshTimer();
+    //  startTokenRefreshTimer();
       return true;
     } catch (e) {
       console.log("Prueba autenticarUser()")
@@ -29,7 +29,7 @@ export const Usuarios = ({ children }) => {
       return false;
     }
   }, [usuario]);
-
+/*
   const refreshAccessToken = async () => {
     try {
       await clienteAxios.post("/refresh-token", {}, { withCredentials: true });
@@ -44,7 +44,7 @@ export const Usuarios = ({ children }) => {
     clearTimeout(refreshTokenTimer);
     refreshTokenTimer = setTimeout(refreshAccessToken, 14 * 60 * 1000);
   };
-
+*/
   const logoutUser = async () => {
     try {
       await clienteAxios.post(
@@ -53,7 +53,7 @@ export const Usuarios = ({ children }) => {
         { withCredentials: true }
       );
       guardarUsuarios(null);
-      clearTimeout(refreshTokenTimer);
+  //    clearTimeout(refreshTokenTimer);
       navigate("/");
       Swal.fire("", "Has cerrado la sesión", "success");
     } catch (e) {
