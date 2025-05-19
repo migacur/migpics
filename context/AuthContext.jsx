@@ -57,6 +57,7 @@ export const Usuarios = ({ children }) => {
       navigate("/");
       Swal.fire("", "Has cerrado la sesión", "success");
     } catch (e) {
+      console.log(e)
       Swal.fire("Error", e.response?.data?.error || "Error al cerrar sesión", "error");
     }
   };
