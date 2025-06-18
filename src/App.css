@@ -675,12 +675,16 @@ input[type="file"] {
   color: #02964c;
 }
 
-.div-images .show_post{
+.div-images .show_post {
   padding: 1.4rem 0;
- /* display: flex; */
- /* flex-wrap: wrap; */
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+}
+
+/* Limita el ancho máximo de cada card */
+.div-images .show_post > div {
+  max-width: 300px; /* o el valor que prefieras */
+  justify-self: center; /* Centra las cards en su celda */
 }
 
 .div-images .show_post img{
