@@ -684,7 +684,7 @@ input[type="file"] {
 /* Limita el ancho máximo de cada card */
 .div-images .show_post > div {
   max-width: 300px; /* o el valor que prefieras */
-  justify-self: center; /* Centra las cards en su celda */
+/*  justify-self: center;  Centra las cards en su celda */
 }
 
 .div-images .show_post img{
