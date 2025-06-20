@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ContextoUsuario } from "../../context/AuthContext";
 import Swal from "sweetalert2";
@@ -6,6 +6,7 @@ import { PostContexto } from "../../context/PostContext";
 import InputSearch from "./InputSearch";
 import FormLogin from "./FormLogin";
 import FormRegister from "./FormRegister";
+import { io } from "socket.io-client";
 
 const Header = () => {
   const { mostrarBusqueda } = useContext(PostContexto);
@@ -16,9 +17,40 @@ const Header = () => {
   let menuAnimated = useRef();
   let menuRef = useRef();
   const input = useRef();
-
+  const [notifications, setNotifications] = useState([]);
   const { usuario, logoutUser } = useContext(ContextoUsuario);
 
+
+  useEffect(() => {
+    // Conecta con el servidor Socket.io
+    const socket = io('https://migpics-backend.onrender.com'); // Cambia si tu backend está en otra URL
+
+    // Únete a la sala del usuario actual para recibir notificaciones
+    if (usuario?.id) {
+      socket.emit('join_user_room', usuario.id);
+    }
+
+    // Escucha notificaciones de nuevos mensajes
+    socket.on('new_message', (data) => {
+      setNotifications(prev => [...prev, {
+        senderId: data.senderId,
+        message: data.message,
+        timestamp: data.timestamp,
+        isRead: false
+      }]);
+
+      // Muestra notificación del navegador (opcional)
+      if (Notification.permission === 'granted') {
+        new Notification(`📩 Mensaje de ${data.senderId}`, {
+          body: data.message
+        });
+      }
+    });
+
+    // Limpia la conexión al desmontar el componente
+    return () => socket.disconnect();
+  }, [usuario]);
+console.log( notifications )
   const leerBusqueda = (e) => guardarBusqueda(e.target.value);
 
   const enviarBusqueda = (e) => {
