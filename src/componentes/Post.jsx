@@ -7,7 +7,6 @@ import Delete from "./Icons/Delete";
 import Close from "./Icons/Close";
 import ListadoLikes from "./ListadoLikes";
 import { ContextoUsuario } from "../../context/AuthContext";
-import Unauthorized from "./Unauthorized";
 
 const Post = () => {
 
@@ -48,7 +47,6 @@ const { postId } = useParams();
      
   }
      verificarUsuario()
-     console.log("UseEffect 1")
   }
  },[usuario,autenticarUser,navigate])
 
@@ -85,7 +83,7 @@ const { postId } = useParams();
   }
   obtenerDatos()
   }
-  console.log("UseEffect 2")
+  
  },[usuario,postId,navigate])
 
 

@@ -33,16 +33,16 @@ const Header = () => {
     // Escucha notificaciones de nuevos mensajes
     socket.on('new_message', (data) => {
       setNotifications(prev => [...prev, {
-        senderId: data.senderId,
-        message: data.message,
+        senderId: data.userLogueado,
+        message: data.msg,
         timestamp: data.timestamp,
         isRead: false
       }]);
 
       // Muestra notificación del navegador (opcional)
       if (Notification.permission === 'granted') {
-        new Notification(`📩 Mensaje de ${data.senderId}`, {
-          body: data.message
+        new Notification(`📩 Mensaje de ${data.userLogueado}`, {
+          body: data.msg
         });
       }
     });
