@@ -43,17 +43,18 @@ padding: 0;
 /* NOTIFICACIONES */
 
   .notificacion{
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     position: absolute;
+    z-index: 100;
     top: 0;
-    right: -30%;
-    bottom: 20%;
+    right: -20%;
+    bottom: 60%;
     padding: .3rem;
     background-color: red;
     color: #fff;
     border-radius: 50%;
-    font-size: .8rem;
+    font-size: .7rem;
     font-weight: bold;
     display: flex;
     justify-content: center;
