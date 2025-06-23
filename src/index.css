@@ -40,6 +40,21 @@ padding: 0;
     75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
     100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
 }
+/* NOTIFICACIONES */
+
+  .notificacion{
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 0;
+    left: 10;
+    padding: .3rem;
+    background-color: #FF0083;
+    color: #fff;
+    border-radius: 50%;
+    font-size: .5rem;
+    font-weight: bold;
+  }
 
   /*Footer */
   .footer{
@@ -582,6 +597,10 @@ padding: 0;
   position: relative;
   background: #3b3b3b;
   font-size: .9rem;
+}
+
+.menu_normal .link_menu .link_msg{
+  position: relative;
 }
 
 .menu_normal .link_menu:nth-child(3){

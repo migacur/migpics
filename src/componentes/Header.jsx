@@ -184,7 +184,12 @@ console.log(countNotifications)
               <NavLink to="/mi-cuenta" className="link_menu">
                 Mi Perfil
               </NavLink>
-              <NavLink to="/mensajes" className="link_menu">
+              <NavLink to="/mensajes" className="link_menu link_msg">
+               { countNotifications > 0 && 
+                <div className="notificacion">
+                    { countNotifications }
+                </div>
+                }
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="21"
