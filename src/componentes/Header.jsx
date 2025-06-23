@@ -56,7 +56,7 @@ useEffect(() => {
     socket.off('new_message', handleNewMessage);  // Importante: remover listener
     socket.disconnect();
   };
-}, [usuario]);
+}, [usuario,countNotifications]);
 console.log( notifications )
 console.log(countNotifications)
   const leerBusqueda = (e) => guardarBusqueda(e.target.value);
