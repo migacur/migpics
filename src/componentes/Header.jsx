@@ -18,39 +18,47 @@ const Header = () => {
   let menuRef = useRef();
   const input = useRef();
   const [notifications, setNotifications] = useState([]);
+  const [countNotifications, setCountNotifications] = useState(0);
   const { usuario, logoutUser } = useContext(ContextoUsuario);
 
 
-  useEffect(() => {
-    // Conecta con el servidor Socket.io
-    const socket = io('https://migpics-backend.onrender.com'); // Cambia si tu backend está en otra URL
+useEffect(() => {
+  if (!usuario?.id) return;  // Salir temprano si no hay usuario
+  
+  const socket = io('https://migpics-backend.onrender.com');
+  
+  // Unirse a sala de usuario
+  socket.emit('join_user_room', usuario.id);
 
-    // Únete a la sala del usuario actual para recibir notificaciones
-    if (usuario?.id) {
-      socket.emit('join_user_room', usuario.id);
-    }
-
-    // Escucha notificaciones de nuevos mensajes
-    socket.on('new_message', (data) => {
-      setNotifications(prev => [...prev, {
-        senderId: data.userLogueado,
-        message: data.msg,
-        timestamp: data.timestamp,
-        isRead: false
-      }]);
-
-      // Muestra notificación del navegador (opcional)
-      if (Notification.permission === 'granted') {
-        new Notification(`📩 Mensaje de ${data.userLogueado}`, {
-          body: data.msg
-        });
-      }
+  // Escuchar nuevos mensajes
+  const handleNewMessage = (data) => {
+    setNotifications(prev => {
+      const newNotifications = [
+        ...prev, 
+        {
+          senderId: data.userLogueado,
+          message: data.msg,
+          timestamp: data.timestamp,
+          isRead: false
+        }
+      ];
+      
+      // Actualizar contador BASADO EN EL NUEVO ESTADO
+      setCountNotifications(data.count);
+      
+      return newNotifications;
     });
+  };
 
-    // Limpia la conexión al desmontar el componente
-    return () => socket.disconnect();
-  }, [usuario]);
+  socket.on('new_message', handleNewMessage);
+
+  return () => {
+    socket.off('new_message', handleNewMessage);  // Importante: remover listener
+    socket.disconnect();
+  };
+}, [usuario]);
 console.log( notifications )
+console.log(countNotifications)
   const leerBusqueda = (e) => guardarBusqueda(e.target.value);
 
   const enviarBusqueda = (e) => {
