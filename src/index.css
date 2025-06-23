@@ -43,12 +43,12 @@ padding: 0;
 /* NOTIFICACIONES */
 
   .notificacion{
-    width: 100px;
-    height: 100px;
+    width: 17px;
+    height: 17px;
     position: absolute;
-    z-index: 100;
-    top: -50px;
-    right: -5px;
+    z-index: 1000;
+    top: -50%;
+    right: -50%;
     padding: .3rem;
     background-color: red;
     color: #fff;
