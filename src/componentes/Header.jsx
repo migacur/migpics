@@ -7,6 +7,7 @@ import InputSearch from "./InputSearch";
 import FormLogin from "./FormLogin";
 import FormRegister from "./FormRegister";
 import { io } from "socket.io-client";
+import clienteAxios from "../../config/axios";
 
 const Header = () => {
   const { mostrarBusqueda } = useContext(PostContexto);
@@ -42,9 +43,19 @@ useEffect(() => {
           isRead: false
         }
       ];
-      
-      // Actualizar contador BASADO EN EL NUEVO ESTADO
-      setCountNotifications(data.count);
+
+      // llaamr endpoint de carga de notificaciones
+      const cargarNotificaciones = async() => {
+        if(!usuario) return;
+          const res = await clienteAxios.get(`/cargar-notificaciones/${usuario?.id}`,{
+            withCredentials:true
+          })
+          console.log(res.data)
+          return res.data.notificaciones;
+      }
+      const resultadoNotificaciones = cargarNotificaciones()
+      // Actualizar en base a socket-io o al resultado del endpoint
+      setCountNotifications(resultadoNotificaciones || data.count);
       
       return newNotifications;
     });
