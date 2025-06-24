@@ -42,24 +42,21 @@ useEffect(() => {
   
   cargarContadorInicial();
 
-  // 3. Escuchar actualizaciones del contador desde el servidor
-  const handleActualizarContador = (data) => {
+ 
+  // 3. Escuchar actualizaciones del contador
+  socket.on('actualizar_contador', (data) => {
+    console.log('📡 Evento actualizar_contador recibido:', data);
     setCountNotifications(data.unread_count);
-  };
+  });
 
-  socket.on('actualizar_contador', handleActualizarContador);
+  // 4. Manejar errores de conexión
+  socket.on('connect_error', (err) => {
+    console.error('Connection error:', err);
+  });
 
-  // 4. (Opcional) Escuchar nuevos mensajes para incremento local
-  const handleNewMessage = () => {
-    setCountNotifications(prev => prev + 1); // Actualización optimista
-  };
-  
-  socket.on('new_message', handleNewMessage);
-
-  // 5. Limpieza al desmontar el componente
+  // 5. Limpieza
   return () => {
-    socket.off('actualizar_contador', handleActualizarContador);
-    socket.off('new_message', handleNewMessage);
+    socket.off('actualizar_contador'); // Remover listener específico
     socket.disconnect();
   };
 }, [usuario]); 
