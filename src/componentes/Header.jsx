@@ -25,41 +25,64 @@ const Header = () => {
 useEffect(() => {
   if (!usuario?.id) return;
 
-  const socket = io('https://migpics-backend.onrender.com');
-  
-  // 1. Unirse a la sala del usuario
-  socket.emit('join_user_room', usuario.id);
+  // 1. Crear la conexión socket con parámetros de conexión mejorados
+  const socket = io('https://migpics-backend.onrender.com', {
+    transports: ['websocket'],
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 3000,
+    withCredentials: true,
+    extraHeaders: {
+      "Access-Control-Allow-Origin": "https://migpics.onrender.com" // Tu frontend
+    }
+  });
 
-  // 2. Cargar el contador inicial de notificaciones
-  const cargarContadorInicial = async () => {
+  // 2. Eventos de depuración (IMPORTANTES)
+  socket.on('connect', () => {
+    console.log('🟢 CONECTADO a Socket.io');
+    socket.emit('join_user_room', usuario.id, (ack) => {
+      console.log(`🛜 Unido a sala user_${usuario.id}`, ack);
+    });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('🔴 DESCONECTADO de Socket.io');
+  });
+
+  socket.on('error', (err) => {
+    console.error('Socket error:', err);
+  });
+
+  // 3. Cargar contador inicial
+  const cargarContador = async () => {
     try {
       const res = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
       setCountNotifications(res.data.unread_count);
+      console.log('📊 Contador inicial:', res.data.unread_count);
     } catch (error) {
-      console.error("Error cargando contador inicial:", error);
+      console.error("Error cargando contador:", error);
     }
   };
   
-  cargarContadorInicial();
-
- 
-  // 3. Escuchar actualizaciones del contador
-  socket.on('actualizar_contador', (data) => {
-    console.log('📡 Evento actualizar_contador recibido:', data);
+  // 4. Escuchar actualizaciones del contador
+  const handleContador = (data) => {
+    console.log('🔔 actualizar_contador recibido!', data);
     setCountNotifications(data.unread_count);
-  });
+  };
+  
+  socket.on('actualizar_contador', handleContador);
 
-  // 4. Manejar errores de conexión
-  socket.on('connect_error', (err) => {
-    console.error('Connection error:', err);
-  });
+  // 5. Solicitar el contador inicial después de conectar
+  socket.on('connect', cargarContador);
 
-  // 5. Limpieza
+  // 6. Limpieza PROFESIONAL
   return () => {
-    socket.off('actualizar_contador'); // Remover listener específico
+    console.log('🧹 Limpiando socket...');
+    socket.off('actualizar_contador', handleContador);
+    socket.off('connect', cargarContador);
     socket.disconnect();
   };
-}, [usuario]); 
+}, [usuario]);
 console.log(countNotifications)
   const leerBusqueda = (e) => guardarBusqueda(e.target.value);
 
