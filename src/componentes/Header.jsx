@@ -18,57 +18,51 @@ const Header = () => {
   let menuAnimated = useRef();
   let menuRef = useRef();
   const input = useRef();
-  const [notifications, setNotifications] = useState([]);
   const [countNotifications, setCountNotifications] = useState(0);
   const { usuario, logoutUser } = useContext(ContextoUsuario);
 
 
 useEffect(() => {
-  if (!usuario?.id) return;  // Salir temprano si no hay usuario
-  
+  if (!usuario?.id) return;
+
   const socket = io('https://migpics-backend.onrender.com');
   
-  // Unirse a sala de usuario
+  // 1. Unirse a la sala del usuario
   socket.emit('join_user_room', usuario.id);
 
-  // Escuchar nuevos mensajes
-  const handleNewMessage = (data) => {
-    setNotifications(prev => {
-      const newNotifications = [
-        ...prev, 
-        {
-          senderId: data.userLogueado,
-          message: data.msg,
-          timestamp: data.timestamp,
-          isRead: false
-        }
-      ];
+  // 2. Cargar el contador inicial de notificaciones
+  const cargarContadorInicial = async () => {
+    try {
+      const res = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
+      setCountNotifications(res.data.unread_count);
+    } catch (error) {
+      console.error("Error cargando contador inicial:", error);
+    }
+  };
+  
+  cargarContadorInicial();
 
-      // llaamr endpoint de carga de notificaciones
-      const cargarNotificaciones = async() => {
-        if(!usuario) return;
-          const res = await clienteAxios.get(`/cargar-notificaciones/${usuario?.id}`,{
-            withCredentials:true
-          })
-          console.log(res.data)
-          return res.data.notificaciones;
-      }
-      const resultadoNotificaciones = cargarNotificaciones()
-      // Actualizar en base a socket-io o al resultado del endpoint
-      setCountNotifications(resultadoNotificaciones || data.count);
-      
-      return newNotifications;
-    });
+  // 3. Escuchar actualizaciones del contador desde el servidor
+  const handleActualizarContador = (data) => {
+    setCountNotifications(data.unread_count);
   };
 
+  socket.on('actualizar_contador', handleActualizarContador);
+
+  // 4. (Opcional) Escuchar nuevos mensajes para incremento local
+  const handleNewMessage = () => {
+    setCountNotifications(prev => prev + 1); // Actualización optimista
+  };
+  
   socket.on('new_message', handleNewMessage);
 
+  // 5. Limpieza al desmontar el componente
   return () => {
-    socket.off('new_message', handleNewMessage);  // Importante: remover listener
+    socket.off('actualizar_contador', handleActualizarContador);
+    socket.off('new_message', handleNewMessage);
     socket.disconnect();
   };
-}, [usuario,countNotifications]);
-console.log( notifications )
+}, [usuario]); 
 console.log(countNotifications)
   const leerBusqueda = (e) => guardarBusqueda(e.target.value);
 
