@@ -38,7 +38,7 @@ useEffect(() => {
 
   // Escuchar actualizaciones del contador
   const handleContador = (data) => {
-    console.log('🔢 Contador actualizado:', data.unread_count);
+     console.log('[Frontend] actualizar_contador recibido', data);
     setCountNotifications(data.unread_count);
   };
 
