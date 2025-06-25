@@ -23,6 +23,7 @@ const Inbox = () => {
           autenticarUser()
         }
 
+  
         const mostrarInbox = async() => {
           try {
               const res = await clienteAxios.get(`/mostrar-chat/${userId}?pagina=${paginaActual}&elementosPorPagina=${elementosPorPagina}`,{
@@ -48,6 +49,20 @@ const Inbox = () => {
   
       }
         mostrarInbox()
+
+ // llamar funcion para leer notificaciones
+        const leerNotificaciones = async() => {
+          try {
+            await clienteAxios.put(`/leer-notificacion/${userId}`,{
+                 withCredentials:true
+               })
+          } catch (error) {
+            console.log(error)
+          }
+        }
+
+        leerNotificaciones()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[usuario,autenticarUser,paginaActual])
 
