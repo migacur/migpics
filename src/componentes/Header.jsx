@@ -25,7 +25,6 @@ const Header = () => {
 useEffect(() => {
   if (!usuario?.id) return;
 
-  // 1. Crear la conexión socket con parámetros de conexión mejorados
   const socket = io('https://migpics-backend.onrender.com', {
     transports: ['websocket'],
     reconnection: true,
@@ -33,57 +32,53 @@ useEffect(() => {
     reconnectionDelay: 3000,
     withCredentials: true,
     extraHeaders: {
-      "Access-Control-Allow-Origin": "https://migpics.onrender.com" // Tu frontend
+      "Access-Control-Allow-Origin": "https://migpics.onrender.com"
     }
   });
 
-  // 2. Eventos de depuración (IMPORTANTES)
+  // Eventos de depuración
   socket.on('connect', () => {
     console.log('🟢 CONECTADO a Socket.io');
-    socket.emit('join_user_room', usuario.id, (ack) => {
-      console.log(`🛜 Unido a sala user_${usuario.id}`, ack);
-    });
+    socket.emit('join_user_room', usuario.id);
   });
 
-  socket.on('disconnect', () => {
-    console.log('🔴 DESCONECTADO de Socket.io');
-  });
+  socket.on('disconnect', () => console.log('🔴 DESCONECTADO'));
+  socket.on('error', console.error);
 
-  socket.on('error', (err) => {
-    console.error('Socket error:', err);
-  });
 
-  // 3. Cargar contador inicial
-  const cargarContador = async () => {
+  // Escuchar actualizaciones del contador (para sincronización exacta)
+  const handleContador = (data) => {
+    console.log('🔢 Contador actualizado:', data.unread_count);
+    setCountNotifications(data.unread_count);
+  };
+
+  socket.on('actualizar_contador', handleContador); // Para contador
+
+  // Cargar datos iniciales
+  const cargarDatosIniciales = async () => {
     try {
-      const res = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
-      setCountNotifications(res.data.unread_count);
-      console.log('📊 Contador inicial:', res.data.unread_count);
+  
+      // 2. Cargar contador de notificaciones
+      const contadorRes = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
+      setCountNotifications(contadorRes.data.unread_count);
+      
+      console.log('📦 Datos iniciales cargados');
     } catch (error) {
-      console.error("Error cargando contador:", error);
+      console.error("Error cargando datos iniciales:", error);
     }
   };
   
-  // 4. Escuchar actualizaciones del contador
-  const handleContador = (data) => {
-    console.log('🔔 actualizar_contador recibido!', data);
-    setCountNotifications(data.unread_count);
-  };
-  
-  socket.on('actualizar_contador', handleContador);
+  cargarDatosIniciales();
 
-  // 5. Solicitar el contador inicial después de conectar
-  socket.on('connect', cargarContador);
-
-  // 6. Limpieza PROFESIONAL
+  // Limpieza
   return () => {
     console.log('🧹 Limpiando socket...');
     socket.off('actualizar_contador', handleContador);
-    socket.off('connect', cargarContador);
     socket.disconnect();
   };
 }, [usuario]);
 console.log(countNotifications)
+
   const leerBusqueda = (e) => guardarBusqueda(e.target.value);
 
   const enviarBusqueda = (e) => {
