@@ -25,16 +25,7 @@ const Header = () => {
 useEffect(() => {
   if (!usuario?.id) return;
 
-  const socket = io('https://migpics-backend.onrender.com', {
-    transports: ['websocket'],
-    reconnection: true,
-    reconnectionAttempts: 5,
-    reconnectionDelay: 3000,
-    withCredentials: true,
-    extraHeaders: {
-      "Access-Control-Allow-Origin": "https://migpics.onrender.com"
-    }
-  });
+  const socket = io('https://migpics-backend.onrender.com');
 
   // Eventos de depuración
   socket.on('connect', () => {
@@ -45,35 +36,34 @@ useEffect(() => {
   socket.on('disconnect', () => console.log('🔴 DESCONECTADO'));
   socket.on('error', console.error);
 
-
-  // Escuchar actualizaciones del contador (para sincronización exacta)
+  // Escuchar actualizaciones del contador
   const handleContador = (data) => {
     console.log('🔢 Contador actualizado:', data.unread_count);
     setCountNotifications(data.unread_count);
   };
 
-  socket.on('actualizar_contador', handleContador); // Para contador
+  // Registrar listener para contador
+  socket.on('actualizar_contador', handleContador);
 
-  // Cargar datos iniciales
-  const cargarDatosIniciales = async () => {
+  // Cargar contador inicial
+  const cargarContadorInicial = async () => {
     try {
-  
-      // 2. Cargar contador de notificaciones
       const contadorRes = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
+      console.log('📦 Contador inicial cargado:', contadorRes.data.unread_count);
       setCountNotifications(contadorRes.data.unread_count);
-      
-      console.log('📦 Datos iniciales cargados');
     } catch (error) {
-      console.error("Error cargando datos iniciales:", error);
+      console.error("Error cargando contador inicial:", error);
     }
   };
   
-  cargarDatosIniciales();
+  // Cargar cuando se conecta el socket
+  socket.on('connect', cargarContadorInicial);
 
   // Limpieza
   return () => {
     console.log('🧹 Limpiando socket...');
     socket.off('actualizar_contador', handleContador);
+    socket.off('connect', cargarContadorInicial);
     socket.disconnect();
   };
 }, [usuario]);
