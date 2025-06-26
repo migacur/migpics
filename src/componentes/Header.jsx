@@ -24,8 +24,10 @@ const Header = () => {
 
 
 useEffect(() => {
-  if(!usuario) return;
- const cargarContadorInicial = async () => {
+
+    if(!usuario) return;
+
+    const cargarContadorInicial = async () => {
     try {
       const contadorRes = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
       console.log('📦 Contador inicial cargado:', contadorRes.data.unread_count);
@@ -35,11 +37,7 @@ useEffect(() => {
     }
   };
   cargarContadorInicial()
-}, [usuario]);
 
-useEffect(() => {
-
-    if(!usuario) return;
     // Conecta con el servidor Socket.io
     const socket = io('https://migpics-backend.onrender.com'); // Cambia si tu backend está en otra URL
 
@@ -56,6 +54,7 @@ useEffect(() => {
       }]);
 
       socket.on('actualizar_contador', (data) => {
+        console.log("PROBANDO SI ACTUALIZA EL CONTADOR...")
         setCountNotifications(data.unread_count)
       });
 
