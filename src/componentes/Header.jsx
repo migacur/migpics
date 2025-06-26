@@ -19,58 +19,44 @@ const Header = () => {
   let menuRef = useRef();
   const input = useRef();
   const [countNotifications, setCountNotifications] = useState(0);
-   const [notificaciones, guardarNotificaciones] = useState([]);
   const { usuario, logoutUser } = useContext(ContextoUsuario);
 
 
 useEffect(() => {
+  if (!usuario) return;
 
-    if(!usuario) return;
-
-    const cargarContadorInicial = async () => {
+  const cargarContadorInicial = async () => {
     try {
       const contadorRes = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
-      console.log('📦 Contador inicial cargado:', contadorRes.data.unread_count);
       setCountNotifications(contadorRes.data.unread_count);
     } catch (error) {
       console.error("Error cargando contador inicial:", error);
     }
   };
-  cargarContadorInicial()
 
-    // Conecta con el servidor Socket.io
-    const socket = io('https://migpics-backend.onrender.com'); // Cambia si tu backend está en otra URL
+  cargarContadorInicial();
 
-    // Únete a la sala del usuario actual para recibir notificaciones
-  
-      socket.emit('join_user_room', usuario.id);
-    
+  // Conecta con el servidor Socket.io
+  const socket = io('https://migpics-backend.onrender.com');
 
-    // Escucha notificaciones de nuevos mensajes
-    socket.on('new_message', (data) => {
-      guardarNotificaciones(prev => [...prev, {
-        senderId: data.userLogueado,
-        message: data.msg,
-      }]);
+  // Únete a la sala del usuario actual para recibir notificaciones
+  socket.emit('join_user_room', usuario.id);
 
-      socket.on('actualizar_contador', (data) => {
-        console.log("PROBANDO SI ACTUALIZA EL CONTADOR...")
-        setCountNotifications(data.unread_count)
-      });
+  // Escucha notificaciones de nuevos mensajes
+  socket.on('actualizar_contador', (data) => {
+    console.log("PROBANDO SI ACTUALIZA EL CONTADOR...");
+    setCountNotifications(data.unread_count);
 
-      // Muestra notificación del navegador (opcional)
-      if (Notification.permission === 'granted') {
-        new Notification(`📩 Mensaje de ${data.senderId}`, {
-          body: data.message
-        });
-      }
-    });
+    // Muestra notificación del navegador (opcional)
+    if (Notification.permission === 'granted') {
+      new Notification(`📩 Te ha llegado un nuevo mensaje`);
+    }
+  });
 
-    // Limpia la conexión al desmontar el componente
-    return () => socket.disconnect();
-  }, [usuario]);
-console.log(countNotifications)
-console.log(notificaciones)
+  // Limpia la conexión al desmontar el componente
+  return () => socket.disconnect();
+}, [usuario]);
+
   const leerBusqueda = (e) => guardarBusqueda(e.target.value);
 
   const enviarBusqueda = (e) => {
