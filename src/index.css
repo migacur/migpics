@@ -76,15 +76,15 @@ padding: 0;
   }
 
   .notificacion_circle{
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background-color: crimson;
+    background-color: #fff;
     padding: .5rem;
      position: absolute;
     z-index: 5000; 
-    top: -8.5px;
-    right: -2px;
+    top: -9px;
+    right: -3.5px;
   }
 
   /*Footer */
