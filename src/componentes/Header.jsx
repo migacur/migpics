@@ -169,11 +169,11 @@ useEffect(() => {
               <span className="line"></span>
               <span className="line"></span>
               <span className="line"></span>
-            </button>
-             { countNotifications > 0 && 
+                { countNotifications > 0 && 
                 <div className="notificacion_circle">
                 </div>
               }
+            </button>
           </div>
         </div>
         <div className="menu_normal">
