@@ -14,7 +14,7 @@ const Inbox = () => {
     const [paginaActual, setPaginaActual] = useState(1);
     const elementosPorPagina = 10;
     const [hayMasPaginas, setHayMasPaginas] = useState(false); 
-
+    const [mensajeLeido,setMensajeLeido] = useState(false)
   
 
     useEffect(() => {
@@ -56,15 +56,17 @@ const Inbox = () => {
             await clienteAxios.put(`/leer-notificacion/${userId}`,{
                  withCredentials:true
                })
+               setMensajeLeido(true)
           } catch (error) {
             console.log(error)
+            setMensajeLeido(false)
           }
         }
 
         leerNotificaciones()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[usuario,autenticarUser,paginaActual])
+    },[usuario,autenticarUser,paginaActual,mensajeLeido])
 
     const leerMensaje = e => setMensaje(e.target.value)
 
