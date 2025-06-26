@@ -19,34 +19,13 @@ const Header = () => {
   let menuRef = useRef();
   const input = useRef();
   const [countNotifications, setCountNotifications] = useState(0);
+   const [notificaciones, guardarNotificaciones] = useState([]);
   const { usuario, logoutUser } = useContext(ContextoUsuario);
 
 
 useEffect(() => {
-  if (!usuario?.id) return;
-
-  const socket = io('https://migpics-backend.onrender.com');
-
-  // Eventos de depuración
-  socket.on('connect', () => {
-    console.log('🟢 CONECTADO a Socket.io');
-    socket.emit('join_user_room', usuario.id);
-  });
-
-  socket.on('disconnect', () => console.log('🔴 DESCONECTADO'));
-  socket.on('error', console.error);
-
-  // Escuchar actualizaciones del contador
-  const handleContador = (data) => {
-     console.log('[Frontend] actualizar_contador recibido', data);
-    setCountNotifications(data.unread_count);
-  };
-
-  // Registrar listener para contador
-  socket.on('actualizar_contador', handleContador);
-
-  // Cargar contador inicial
-  const cargarContadorInicial = async () => {
+  if(!usuario) return;
+ const cargarContadorInicial = async () => {
     try {
       const contadorRes = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
       console.log('📦 Contador inicial cargado:', contadorRes.data.unread_count);
@@ -55,20 +34,44 @@ useEffect(() => {
       console.error("Error cargando contador inicial:", error);
     }
   };
-  
-  // Cargar cuando se conecta el socket
-  socket.on('connect', cargarContadorInicial);
-
-  // Limpieza
-  return () => {
-    console.log('🧹 Limpiando socket...');
-    socket.off('actualizar_contador', handleContador);
-    socket.off('connect', cargarContadorInicial);
-    socket.disconnect();
-  };
+  cargarContadorInicial()
 }, [usuario]);
-console.log(countNotifications)
 
+useEffect(() => {
+
+    if(!usuario) return;
+    // Conecta con el servidor Socket.io
+    const socket = io('https://migpics-backend.onrender.com'); // Cambia si tu backend está en otra URL
+
+    // Únete a la sala del usuario actual para recibir notificaciones
+  
+      socket.emit('join_user_room', usuario.id);
+    
+
+    // Escucha notificaciones de nuevos mensajes
+    socket.on('new_message', (data) => {
+      guardarNotificaciones(prev => [...prev, {
+        senderId: data.userLogueado,
+        message: data.msg,
+      }]);
+
+      socket.on('actualizar_contador', (data) => {
+        setCountNotifications(data.unread_count)
+      });
+
+      // Muestra notificación del navegador (opcional)
+      if (Notification.permission === 'granted') {
+        new Notification(`📩 Mensaje de ${data.senderId}`, {
+          body: data.message
+        });
+      }
+    });
+
+    // Limpia la conexión al desmontar el componente
+    return () => socket.disconnect();
+  }, [usuario]);
+console.log(countNotifications)
+console.log(notificaciones)
   const leerBusqueda = (e) => guardarBusqueda(e.target.value);
 
   const enviarBusqueda = (e) => {
