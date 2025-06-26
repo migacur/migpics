@@ -60,6 +60,32 @@ padding: 0;
     align-items: center;
   }
 
+  .notificacion_res{
+     width: 20px;
+    height: 20px;
+    padding: .2rem .3rem;
+    background-color: crimson;
+    color: #fff;
+    border-radius: 50%;
+    font-size: .80rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: .3rem;
+  }
+
+  .notificacion_circle{
+    width: 10px;
+    height: 10px;
+    background-color: crimson;
+    padding: .5rem;
+     position: absolute;
+    z-index: 5000; 
+    top: -8.5px;
+    right: -2px;
+  }
+
   /*Footer */
   .footer{
     text-align: center;
