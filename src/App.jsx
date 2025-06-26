@@ -27,12 +27,14 @@ import Bandeja from './componentes/Bandeja'
 import RecoverPass from './componentes/RecoverPass';
 import EnviarCodigo from './componentes/EnviarCodigo'
 import Inbox from './componentes/Inbox'
+import { NotificacionContext } from '../context/NotificacionContext';
 
 
 function App() {
 
   return (
     <Usuarios>
+      <NotificacionContext>
       <PostContext>
     <>
       <div className='principal'>
@@ -72,6 +74,7 @@ function App() {
     </div>
     </>
       </PostContext>
+      </NotificacionContext>
     </Usuarios>
   )
 }
