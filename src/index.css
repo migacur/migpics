@@ -80,11 +80,15 @@ padding: 0;
     height: 4px;
     border-radius: 50%;
     background-color: #fff;
-    padding: .5rem;
+    padding: .2rem;
      position: absolute;
     z-index: 5000; 
     top: -9px;
-    right: -4.5px;
+    right: -5px;
+  }
+
+  .ocultar_circle{
+    display: none;
   }
 
   /*Footer */
