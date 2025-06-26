@@ -43,8 +43,8 @@ padding: 0;
 /* NOTIFICACIONES */
 
   .notificacion{
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
     position: absolute;
     z-index: 5000; 
     top: -7.5px;
@@ -53,7 +53,7 @@ padding: 0;
     background-color: crimson;
     color: #fff;
     border-radius: 50%;
-    font-size: .80rem;
+    font-size: .79rem;
     font-weight: bold;
     display: flex;
     justify-content: center;
@@ -421,9 +421,8 @@ padding: 0;
   display: block;
 }
 
-
-
 .hamburger{
+  position: relative;
   background-color: transparent;
   border: none;
   outline: none;
