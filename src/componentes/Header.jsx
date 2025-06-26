@@ -8,6 +8,7 @@ import FormLogin from "./FormLogin";
 import FormRegister from "./FormRegister";
 import { io } from "socket.io-client";
 import clienteAxios from "../../config/axios";
+import { NotifyContext } from "../../context/NotificacionContext";
 
 const Header = () => {
   const { mostrarBusqueda } = useContext(PostContexto);
@@ -19,7 +20,8 @@ const Header = () => {
   let menuRef = useRef();
   const input = useRef();
   const circle = useRef();
-  const [countNotifications, setCountNotifications] = useState(0);
+   const { notificaciones,guardarNotificaciones } = useContext(NotifyContext);
+  //const [countNotifications, setCountNotifications] = useState(0);
   const { usuario, logoutUser } = useContext(ContextoUsuario);
 
 
@@ -29,7 +31,7 @@ useEffect(() => {
   const cargarContadorInicial = async () => {
     try {
       const contadorRes = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
-      setCountNotifications(contadorRes.data.unread_count);
+      guardarNotificaciones(contadorRes.data.unread_count);
     } catch (error) {
       console.error("Error cargando contador inicial:", error);
     }
@@ -45,7 +47,7 @@ useEffect(() => {
 
   // Escucha notificaciones de nuevos mensajes
   socket.on('actualizar_contador', (data) => {
-    setCountNotifications(data.unread_count);
+    guardarNotificaciones(data.unread_count);
 
     // Muestra notificación del navegador (opcional)
     if (Notification.permission === 'granted') {
@@ -172,7 +174,7 @@ useEffect(() => {
               <span className="line"></span>
               <span className="line"></span>
               <span className="line"></span>
-                { countNotifications > 0 && 
+                { notificaciones > 0 && 
                 <div className="notificacion_circle" ref={circle}>
                 </div>
               }
@@ -189,9 +191,9 @@ useEffect(() => {
                 Mi Perfil
               </NavLink>
               <NavLink to="/mensajes" className="link_menu link_msg">
-               { countNotifications > 0 && 
+               { notificaciones > 0 && 
                 <div className="notificacion">
-                    <p>{ countNotifications }</p>
+                    <p>{ notificaciones }</p>
                 </div>
                 }
                 <svg
@@ -270,9 +272,9 @@ useEffect(() => {
                   <path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 0 0 1.228 0L20 9.044 20.002 18H4z" />
                 </svg>
                 Mensajes
-                 { countNotifications > 0 && 
+                 { notificaciones > 0 && 
                 <div className="notificacion_res">
-                    <p>{ countNotifications }</p>
+                    <p>{ notificaciones }</p>
                 </div>
                 }
               </NavLink>

@@ -3,6 +3,7 @@ import Swal from "sweetalert2"
 import clienteAxios from "../../config/axios"
 import { useContext, useEffect, useState } from "react"
 import { ContextoUsuario } from "../../context/AuthContext"
+import { NotifyContext } from "../../context/NotificacionContext"
 
 const Inbox = () => {
 
@@ -14,7 +15,7 @@ const Inbox = () => {
     const [paginaActual, setPaginaActual] = useState(1);
     const elementosPorPagina = 10;
     const [hayMasPaginas, setHayMasPaginas] = useState(false); 
-    const [mensajeLeido,setMensajeLeido] = useState(false)
+     const { guardarNotificaciones } = useContext(NotifyContext);
   
 
     useEffect(() => {
@@ -56,17 +57,27 @@ const Inbox = () => {
             await clienteAxios.put(`/leer-notificacion/${userId}`,{
                  withCredentials:true
                })
-               setMensajeLeido(true)
+         
           } catch (error) {
             console.log(error)
-            setMensajeLeido(false)
           }
         }
 
         leerNotificaciones()
 
+        const cargarContadorInicial = async () => {
+    try {
+      const contadorRes = await clienteAxios.get(`/cargar-notificaciones/${usuario.id}`);
+      guardarNotificaciones(contadorRes.data.unread_count);
+    } catch (error) {
+      console.error("Error cargando contador inicial:", error);
+    }
+  };
+
+  cargarContadorInicial();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[usuario,autenticarUser,paginaActual,mensajeLeido])
+    },[usuario,autenticarUser,paginaActual])
 
     const leerMensaje = e => setMensaje(e.target.value)
 
