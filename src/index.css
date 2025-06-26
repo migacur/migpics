@@ -399,6 +399,11 @@ padding: 0;
   background: #FF0083;
 }
 
+.barra_menu .button_user:hover .notificacion_res{
+  background: #fff;
+  color: crimson;
+}
+
 .menu-active{
   transform: translateX(0%);
   position: absolute;
