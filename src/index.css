@@ -80,10 +80,10 @@ padding: 0;
     height: 5.5px;
     border-radius: 50%;
     background-color: #fff;
-    padding: .3rem;
+    padding: .3.1rem;
      position: absolute;
     z-index: 5000; 
-    top: -9px;
+    top: -8.9px;
     right: -5px;
   }
 
