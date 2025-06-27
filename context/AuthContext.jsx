@@ -8,6 +8,7 @@ export const ContextoUsuario = createContext();
 
 export const Usuarios = ({ children }) => {
   const [usuario, guardarUsuarios] = useState(null);
+  const [isLoad, setIsLoad] = useState(false);
   const navigate = useNavigate();
   //let refreshTokenTimer;
 
@@ -19,6 +20,7 @@ export const Usuarios = ({ children }) => {
       // Evita actualizar el estado si los datos son iguales
       if (JSON.stringify(res.data) !== JSON.stringify(usuario)) {
         guardarUsuarios(res.data);
+        setIsLoad(true)
       }
     //  startTokenRefreshTimer();
       return true;
@@ -73,6 +75,7 @@ export const Usuarios = ({ children }) => {
         usuario,
         autenticarUser,
         guardarUsuarios,
+        isLoad,
         logoutUser,
       }}
     >
