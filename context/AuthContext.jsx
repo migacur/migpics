@@ -8,25 +8,26 @@ export const ContextoUsuario = createContext();
 
 export const Usuarios = ({ children }) => {
   const [usuario, guardarUsuarios] = useState(null);
-  const [isLoad, setIsLoad] = useState(false);
+  const [isLoad, setIsLoad] = useState(true);
   const navigate = useNavigate();
   //let refreshTokenTimer;
 
   const autenticarUser = useCallback(async () => {
+    setIsLoad(true)
     try {
       const res = await clienteAxios.get("/verify", {
         withCredentials: true,
       });
       if (JSON.stringify(res.data) !== JSON.stringify(usuario)) {
         guardarUsuarios(res.data);
-        setIsLoad(true)
       }
       return true;
     } catch (e) {
-      console.log("Prueba autenticarUser()")
       console.log(e)
       guardarUsuarios(null);
       return false;
+    }finally{
+      setIsLoad(false)
     }
   }, [usuario]);
 
