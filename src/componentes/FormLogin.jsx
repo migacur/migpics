@@ -10,6 +10,7 @@ const FormLogin = ({closeForm,showFormRegister}) => {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   const { usuario, autenticarUser } = useContext(ContextoUsuario);
+  const [isLogin,setIsLogin]=useState(false)
   const [errors, setErrors] = useState([]);
 
   useEffect(() => {
@@ -18,6 +19,7 @@ const FormLogin = ({closeForm,showFormRegister}) => {
 
   const loginUser = async (e) => {
     e.preventDefault();
+    setIsLogin(true)
     try {
       const res = await clienteAxios.post("/ingresar-usuario", data, {
         withCredentials: true,
@@ -44,6 +46,8 @@ const FormLogin = ({closeForm,showFormRegister}) => {
           icon: "error",
         });
       }
+    }finally{
+      setIsLogin(false)
     }
   };
 
@@ -115,6 +119,11 @@ const FormLogin = ({closeForm,showFormRegister}) => {
             ))}{" "}
           </ul>
         )}
+          {isLogin &&
+          <div className="div_load_form">
+          <p className="load_form">Ingresando...</p>
+          </div>
+      }
         <input type="submit" value="Ingresar" className="btn-send"></input>
 
         <Link to="/forgot-password" className="btn-send back" onClick={closeForm}>
@@ -122,6 +131,7 @@ const FormLogin = ({closeForm,showFormRegister}) => {
         </Link>
        
       </form>
+    
       <button className="btn-send back" onClick={showFormRegister}>
           ¿No tienes cuenta? Regístrate
         </button>

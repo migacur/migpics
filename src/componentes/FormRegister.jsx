@@ -11,6 +11,7 @@ const FormRegister = ({closeForm,showFormLogin}) => {
   const [user, setUser] = useState([]);
   const [comprobarPass, setComprobarPass] = useState(false);
   const [errors, setErrors] = useState([]);
+    const [isLogin,setIsLogin]=useState(false)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,7 +20,7 @@ const FormRegister = ({closeForm,showFormLogin}) => {
 
   const registerUser = async (e) => {
     e.preventDefault();
-
+  setIsLogin(true)
     try {
       const res = await clienteAxios.post("/registrar-usuario", user);
       console.log(res.data);
@@ -39,6 +40,8 @@ const FormRegister = ({closeForm,showFormLogin}) => {
           icon: "error",
         });
       }
+    }finally{
+      setIsLogin(false)
     }
   };
 
@@ -172,6 +175,11 @@ const FormRegister = ({closeForm,showFormLogin}) => {
             {error.msg}
           </li>
         ))}
+        {isLogin &&
+          <div className="div_load_form">
+          <p className="load_form">Registrando usuario...</p>
+          </div>
+      }
         <input type="submit" value="Registrarme" className="btn-send"></input>
       </form>
       <button className="btn-send back" onClick={showFormLogin}>
