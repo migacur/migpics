@@ -223,6 +223,9 @@
   user-select: none;
   position: relative;
   object-fit:cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .change_avatar{

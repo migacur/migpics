@@ -17,12 +17,10 @@ export const Usuarios = ({ children }) => {
       const res = await clienteAxios.get("/verify", {
         withCredentials: true,
       });
-      // Evita actualizar el estado si los datos son iguales
       if (JSON.stringify(res.data) !== JSON.stringify(usuario)) {
         guardarUsuarios(res.data);
         setIsLoad(true)
       }
-    //  startTokenRefreshTimer();
       return true;
     } catch (e) {
       console.log("Prueba autenticarUser()")
@@ -31,22 +29,7 @@ export const Usuarios = ({ children }) => {
       return false;
     }
   }, [usuario]);
-/*
-  const refreshAccessToken = async () => {
-    try {
-      await clienteAxios.post("/refresh-token", {}, { withCredentials: true });
-      startTokenRefreshTimer();
-    } catch (error) {
-      guardarUsuarios(null);
-      navigate("/");
-    }
-  };
 
-  const startTokenRefreshTimer = () => {
-    clearTimeout(refreshTokenTimer);
-    refreshTokenTimer = setTimeout(refreshAccessToken, 14 * 60 * 1000);
-  };
-*/
   const logoutUser = async () => {
     try {
       await clienteAxios.post(
@@ -55,7 +38,7 @@ export const Usuarios = ({ children }) => {
         { withCredentials: true }
       );
       guardarUsuarios(null);
-  //    clearTimeout(refreshTokenTimer);
+      setIsLoad(false)
       navigate("/");
       Swal.fire("", "Has cerrado la sesión", "success");
     } catch (e) {
@@ -65,9 +48,8 @@ export const Usuarios = ({ children }) => {
   };
 
   useEffect(() => {
-    // Verificar autenticación solo al montar el componente
     autenticarUser();
-  }, []); // Eliminar todas las dependencias
+  }, []);
 
   return (
     <ContextoUsuario.Provider
