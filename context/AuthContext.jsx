@@ -25,6 +25,8 @@ export const Usuarios = ({ children }) => {
     } catch (e) {
       console.log(e)
       guardarUsuarios(null);
+       document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+       document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       return false;
     }finally{
       setIsLoad(false)
@@ -40,6 +42,8 @@ export const Usuarios = ({ children }) => {
       );
       guardarUsuarios(null);
       setIsLoad(false)
+        document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+       document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       navigate("/");
       Swal.fire("", "Has cerrado la sesión", "success");
     } catch (e) {
