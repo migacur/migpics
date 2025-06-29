@@ -181,7 +181,7 @@ useEffect(() => {
           </div>
         </div>
         <div className="menu_normal">
-          {!isLoad ? (<p></p>) : usuario ? (
+          {isLoad ? (<p></p>) : usuario ? (
             <>
               <NavLink to="/agregar-post" className="link_menu">
                 + Subir
