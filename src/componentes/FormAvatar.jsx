@@ -42,7 +42,6 @@ const FormAvatar = ({showForm}) => {
             res.data.msg,
             'success'
           )
-          isLoad(false)
           showForm(false)
       }
       } catch (e) {
@@ -52,6 +51,7 @@ const FormAvatar = ({showForm}) => {
           text: e.response.data.error,
           icon: 'error',
         })
+      }finally{
         isLoad(false)
       }
 
