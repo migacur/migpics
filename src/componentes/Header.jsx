@@ -83,12 +83,12 @@ useEffect(() => {
       menuRef.current.classList.add("menu-active");
       menuRef.current.classList.remove("menu-inactive");
       menuAnimated.current.classList.add("active-anim");
-      circle.current.classList.add("ocultar_circle")
+      circle.current.classList.add("ocultar_circle");
     } else {
       menuRef.current.classList.remove("menu-active");
       menuRef.current.classList.add("menu-inactive");
       menuAnimated.current.classList.remove("active-anim");
-      circle.current.classList.remove("ocultar_circle")
+      circle.current.classList.remove("ocultar_circle");
     }
   };
 
@@ -174,7 +174,7 @@ useEffect(() => {
               <span className="line"></span>
               <span className="line"></span>
                 { notificaciones > 0 && 
-                <div className="notificacion_circle" ref={circle}>
+                <div ref={circle} className="notificacion_circle">
                 </div>
               }
             </button>
